@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">JavBridge</string>
+
+    <string name="import_title">import</string>
+    <string name="configure_title">configure</string>
+    <string name="export_title">export</string>
+
+    <string name="url_name">Name</string>
+    <string name="url_link">Link</string>
+    <string name="url_change">change</string>
+    <string name="url_cancel">Cancel</string>
+
+    <string name="filter_year">year</string>
+    <string name="filter_actor">actor</string>
+    <string name="filter_studio">studio</string>
+    <string name="filter_yearSplit">-</string>
+    <string name="filter_button">filter</string>
+</resources>

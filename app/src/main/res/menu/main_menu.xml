@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:title="@string/import_title"
+        android:id="@+id/importJson"/>
+    <item android:title="@string/configure_title"
+        android:id="@+id/configure"/>
+    <item android:title="@string/export_title"
+        android:id="@+id/export"/>
+    <item android:id="@+id/worker"
+        android:title=""/>
+</menu>
