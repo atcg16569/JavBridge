@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
                             mainViewModel.flowMovie(m.id).collect {
                                 if (it == null) {
                                     mainViewModel.susAdd(m)
-                                }// else update
+                                }// else update 不覆盖应用数据
                             }
                         }
                     }

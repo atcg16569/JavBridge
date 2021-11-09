@@ -6,8 +6,6 @@ import androidx.work.*
 import com.example.javBridge.database.DatabaseApplication
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.util.concurrent.TimeUnit
 
 class InfoWorker(context: Context, workerParams: WorkerParameters) :
@@ -21,8 +19,8 @@ class InfoWorker(context: Context, workerParams: WorkerParameters) :
         } else {
             for (m in movies) {
                 val url = repository.busJoinUrl(m.id)
+                val time = (0..25).random().toLong()
                 runBlocking {
-                    val time = (0..25).random().toLong()
                     delay(time * 1000)
                 }
                 val doc = repository.getDoc(url)
@@ -31,7 +29,7 @@ class InfoWorker(context: Context, workerParams: WorkerParameters) :
                     m.actress = result["actress"] as MutableSet<String>
                     m.studio = result["studio"] as String
                     repository.updateMovie(m)
-                    Log.d("update result", m.id)
+                    Log.d("update result", "${m.id}\ndelay $time seconds")
                 }
             }
 //            val output = workDataOf("update result" to Json.encodeToString(movies))
