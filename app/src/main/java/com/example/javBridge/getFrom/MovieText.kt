@@ -16,14 +16,7 @@ class MovieText {
             for (m in 0 until movies.length()) {
                 val json = movies.getJSONObject(m)
                 val dateString = json.getString("date")
-                val pattern1 = Regex("\\d{2}/\\d{2}/\\d{4}")
-//                val pattern2 = Regex("\\d{4}-\\d{2}-\\d{2}")
-                val date = if (dateString.matches(pattern1)) {
-                    val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
-                    LocalDate.parse(dateString, formatter)
-                } else {
-                    LocalDate.parse(json.getString("date"))
-                }
+                val date = dateParse(dateString)
                 val movie = Movie(
                     json.getString("id"),
                     date
@@ -40,13 +33,7 @@ class MovieText {
         for (m in 0 until movies.length()) {
             val json = movies.getJSONObject(m)
             val dateString = json.getString("date")
-            val pattern1 = Regex("\\d{2}/\\d{2}/\\d{4}")
-            val date = if (dateString.matches(pattern1)) {
-                val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
-                LocalDate.parse(dateString, formatter)
-            } else {
-                LocalDate.parse(json.getString("date"))
-            }
+            val date = dateParse(dateString)
             val star = json.getString("star")
             val actress = star.split(",").toMutableSet()
             val movie = Movie(
@@ -63,4 +50,16 @@ class MovieText {
     fun restore(txt: String): List<Movie> {
         return Json.decodeFromString(txt)
     }
+}
+
+private fun dateParse(dateString: String): LocalDate? {
+    val pattern1 = Regex("\\d{2}/\\d{2}/\\d{4}")
+//  val pattern2 = Regex("\\d{4}-\\d{2}-\\d{2}")
+    val date = if (dateString.matches(pattern1)) {
+        val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+        LocalDate.parse(dateString, formatter)
+    } else {
+        LocalDate.parse(dateString)
+    }
+    return date
 }
