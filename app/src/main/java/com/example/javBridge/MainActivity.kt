@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     manager.enqueueUniquePeriodicWork(
                         "movie_refresh",
                         ExistingPeriodicWorkPolicy.REPLACE,
-                        javRequest()
+                        javRequest
                     )
                     Toast.makeText(this, "Worker Enqueued", Toast.LENGTH_LONG)
                         .show()

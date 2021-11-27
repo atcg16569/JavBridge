@@ -52,7 +52,7 @@ class MovieText {
     }
 }
 
-private fun dateParse(dateString: String): LocalDate? {
+private fun dateParse(dateString: String): LocalDate {
     val pattern1 = Regex("\\d{2}/\\d{2}/\\d{4}")
 //  val pattern2 = Regex("\\d{4}-\\d{2}-\\d{2}")
     val date = if (dateString.matches(pattern1)) {

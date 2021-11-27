@@ -15,7 +15,7 @@ class InfoWorker(context: Context, workerParams: WorkerParameters) :
         val movies = repository.limitMovies()
         if (movies.isNullOrEmpty()) {
 //            val output = workDataOf("update result" to "no null movies\n$movies")
-            Log.d("update result","no null movies$movies")
+            Log.d("update result", "no null movies$movies")
         } else {
             for (m in movies) {
                 val url = repository.busJoinUrl(m.id)
@@ -43,10 +43,7 @@ private val constraints = Constraints.Builder()
     .setRequiresBatteryNotLow(true)
     .setRequiresStorageNotLow(true)
     .build()
-
-fun javRequest(): PeriodicWorkRequest {
 //    val data = workDataOf("movies" to movies)
-    return PeriodicWorkRequestBuilder<InfoWorker>(1, TimeUnit.DAYS)
-        .setConstraints(constraints)//.setInputData(data)
-        .build()
-}
+val javRequest = PeriodicWorkRequestBuilder<InfoWorker>(1, TimeUnit.DAYS)
+    .setConstraints(constraints)//.setInputData(data)
+    .build()
