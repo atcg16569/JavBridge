@@ -15,18 +15,14 @@ interface BridgeDao {
     @Query("SELECT * FROM movie")
     fun flowAllMovies(): Flow<List<Movie>>
 
-    @Query(
-        "SELECT * FROM movie WHERE (date Between :start AND :end) " +
-                //'%' || :actress || '%'
-                "AND (actress IS :actress OR actress LIKE '%' || :actress || '%' ) " +
-                "AND (studio IS :studio OR studio=:studio)"
-    )
-    fun filterMovies(
-        start: String,
-        end: String,
-        actress: String?,
-        studio: String?
-    ): List<Movie>
+    @Query("SELECT * FROM movie WHERE (date Between :start AND :end) ")
+    fun moviesByDate(start: String, end: String): List<Movie>
+
+    @Query("SELECT * FROM movie WHERE (actress IS :actress OR actress LIKE '%' || :actress || '%' ) ")
+    fun moviesByActress(actress: String): List<Movie>
+
+    @Query("SELECT * FROM movie WHERE (studio IS :studio OR studio=:studio)")
+    fun moviesByStudio(studio: String): List<Movie>
 
     @Query("SELECT * FROM movie WHERE (actress IS NULL OR studio IS NULL) LIMIT (:limit)")
     fun limitMovies(limit: Int = 5): List<Movie>

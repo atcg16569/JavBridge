@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 // nest recyclerview传递viewmodel,livedata,监听点击事件
         movieAdapter.mainViewModel = mainViewModel
 //        val totalMovies = mutableListOf<Movie>()
-        mainViewModel.liveAllMovies().observe(this, { allMovies ->
+        mainViewModel.liveAllMovies().observe(this) { allMovies ->
             movieAdapter.setMovies(allMovies)
 //            if (totalMovies.isEmpty()) {
 //                totalMovies.addAll(allMovies)
@@ -57,8 +57,8 @@ class MainActivity : AppCompatActivity() {
 //                totalMovies.clear()
 //                totalMovies.addAll(allMovies)
 //            }
-        })
-        mainViewModel.liveFilter.observe(this, { filterMovies ->
+        }
+        mainViewModel.liveFilter.observe(this) { filterMovies ->
             if (filterMovies.isNotEmpty()) {
                 movieAdapter.setMovies(filterMovies)
             } else {
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 Toast.makeText(this, "filter empty!", Toast.LENGTH_LONG).show()
             }
-        })
+        }
 
         mainBinding.executePendingBindings()
     }
@@ -79,14 +79,14 @@ class MainActivity : AppCompatActivity() {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
         WorkManager.getInstance(this).getWorkInfosForUniqueWorkLiveData("movie_refresh")
-            .observe(this, { info ->
+            .observe(this) { info ->
                 val button = menu.findItem(R.id.worker)
                 if (info.isNotEmpty()) {
                     button.title = info[0].state.toString()
                 } else {
                     button.title = "schedule"
                 }
-            })
+            }
         return true
 //        return super.onCreateOptionsMenu(menu)
     }
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
             if (uris.isNotEmpty()) {
                 for (u in uris) {
-                    val name = File(u.path).name
+                    val name = File(u.path!!).name
                     Log.d("import file", name)
                     val host = name.substringBefore(".json")
                     val text = readTextFromUri(u)

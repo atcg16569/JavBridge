@@ -10,19 +10,14 @@ class BridgeRepository(private val bridgeDao: BridgeDao) {
     fun flowMovie(id: String) = bridgeDao.flowMovie(id)
     fun flowAllMovies() = bridgeDao.flowAllMovies()
     suspend fun addMovie(movie: Movie) = bridgeDao.addMovie(movie)
-    fun filterMovies(
-        start: String,
-        end: String,
-        actress: String?,
-        studio: String?
-    ) =
-        bridgeDao.filterMovies(start, end, actress, studio)
-
     suspend fun addUrl(url: Url) = bridgeDao.addUrl(url)
     fun liveUrl(name: String) = bridgeDao.liveUrl(name)
     fun liveUrls() = bridgeDao.liveUrls()
     suspend fun removeUrl(url: Url) = bridgeDao.removeUrl(url)
     suspend fun updateUrl(url: Url) = bridgeDao.updateUrl(url)
+    fun moviesByDate(start: String, end: String) = bridgeDao.moviesByDate(start, end)
+    fun moviesByActress(actress: String) = bridgeDao.moviesByActress(actress)
+    fun moviesByStudio(studio: String) = bridgeDao.moviesByStudio(studio)
 }
 
 class RemoteRepository(private val bridgeDao: BridgeDao) {

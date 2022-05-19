@@ -14,8 +14,9 @@ class MainViewModel(
     fun liveAllMovies() = bridgeRepository.flowAllMovies().asLiveData()
     fun flowAllMovies() = bridgeRepository.flowAllMovies()
     fun liveUrls() = bridgeRepository.liveUrls()
-    fun filter(start: String, end: String, actress: String?, studio: String?) =
-        bridgeRepository.filterMovies(start, end, actress, studio)
+    fun moviesByDate(start: String, end: String) = bridgeRepository.moviesByDate(start, end)
+    fun moviesByActress(actress: String) = bridgeRepository.moviesByActress(actress)
+    fun moviesByStudio(studio: String) = bridgeRepository.moviesByStudio(studio)
 }
 
 class MainViewModelFactory(
