@@ -22,14 +22,14 @@ class UrlDialogFragment(private val urlViewModel: UrlViewModel) : DialogFragment
                     val name = view.findViewById<EditText>(R.id.urlName).text.toString()
                     val link = view.findViewById<EditText>(R.id.urlLink).text.toString()
                     if (name.isNotEmpty() && link.isNotEmpty() && link.startsWith("http")) {
-                        urlViewModel.liveUrl(name).observe(this@UrlDialogFragment, { url ->
+                        urlViewModel.liveUrl(name).observe(this@UrlDialogFragment) { url ->
                             if (url == null) {
                                 val ur = Url(name, link)
                                 urlViewModel.add(ur)
                             } else {
                                 Log.d("addUrl", "${url.name} existed")
                             }
-                        })
+                        }
                     }
                 }
                 setNegativeButton("cancel") { _, _ ->

@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface BridgeDao {
     @Insert
     suspend fun addMovie(movie: Movie)
+    @Delete
+    suspend fun removeMovie(movie: Movie)
 
     @Query("SELECT * FROM movie WHERE id=:id")
     fun flowMovie(id: String): Flow<Movie?>

@@ -4,6 +4,7 @@
     <string name="import_title">import</string>
     <string name="configure_title">configure</string>
     <string name="export_title">export</string>
+    <string name="explore_title">explore</string>
 
     <string name="url_name">Name</string>
     <string name="url_link">Link</string>

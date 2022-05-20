@@ -3,6 +3,8 @@ package com.example.javBridge.viewModel
 import androidx.lifecycle.*
 import com.example.javBridge.database.Movie
 import com.example.javBridge.database.BridgeRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val bridgeRepository: BridgeRepository,
@@ -10,7 +12,9 @@ class MainViewModel(
     val liveFilter = MutableLiveData<List<Movie>>()
     fun flowMovie(id: String) = bridgeRepository.flowMovie(id)
     suspend fun susAdd(movie: Movie) = bridgeRepository.addMovie(movie)
-
+    fun removeMovie(movie: Movie) = viewModelScope.launch(Dispatchers.IO) {
+        bridgeRepository.removeMovie(movie)
+    }
     fun liveAllMovies() = bridgeRepository.flowAllMovies().asLiveData()
     fun flowAllMovies() = bridgeRepository.flowAllMovies()
     fun liveUrls() = bridgeRepository.liveUrls()

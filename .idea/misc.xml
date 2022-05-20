@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/activity_clip.xml" value="0.28940217391304346" />
         <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/activity_drawer.xml" value="0.15" />
         <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/activity_main.xml" value="0.3614457831325301" />
         <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/activity_url.xml" value="0.2696629213483146" />
+        <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/activity_web.xml" value="0.21794871794871795" />
         <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/app_bar_drawer.xml" value="0.2696629213483146" />
         <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/content_drawer.xml" value="0.14427083333333332" />
         <entry key="..\:/AndroidStudioProjects/JavBridge/app/src/main/res/layout/fragment_filter.xml" value="0.33" />

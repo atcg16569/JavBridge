@@ -28,7 +28,7 @@ class UrlActivity : AppCompatActivity() {
         urlBinding.urlViewModel = urlViewModel
         urlBinding.urList.adapter = urlAdapter
         urlAdapter.urlViewModel = urlViewModel
-        urlViewModel.liveUrls().observe(this, { urls ->
+        urlViewModel.liveUrls().observe(this) { urls ->
             if (urlAdapter.itemCount == 0) {
                 urlAdapter.urls.addAll(urls)
                 urlAdapter.notifyItemRangeInserted(0, urlAdapter.itemCount)
@@ -37,7 +37,7 @@ class UrlActivity : AppCompatActivity() {
                 urlAdapter.urls.add(urls.last())
                 urlAdapter.notifyItemInserted(urlAdapter.itemCount)
             }
-        })
+        }
         val urlHelper = UrlHelper(urlAdapter, urlViewModel)
         ItemTouchHelper(urlHelper).attachToRecyclerView(urlBinding.urList)
         urlBinding.executePendingBindings()

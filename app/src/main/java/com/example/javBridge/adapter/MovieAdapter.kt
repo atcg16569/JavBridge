@@ -8,7 +8,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.javBridge.database.Movie
-import com.example.javBridge.database.Url
 import com.example.javBridge.databinding.MovieItemBinding
 import com.example.javBridge.holder.MovieHolder
 import com.example.javBridge.viewModel.MainViewModel
@@ -29,9 +28,9 @@ class MovieAdapter() :
 
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         //必须在bind初始化MovieChildAdapter()，否则parentID不对
-        mainViewModel.liveUrls().observe(holder.itemView.context as LifecycleOwner, { urls ->
+        mainViewModel.liveUrls().observe(holder.itemView.context as LifecycleOwner) { urls ->
             holder.childAdapter.setUrls(urls)
-        })
+        }
         holder.bind(movies[position])
     }
 
@@ -39,7 +38,10 @@ class MovieAdapter() :
         return movies.size
     }
 
-    private val movies = mutableListOf<Movie>()
+    val movies = mutableListOf<Movie>()
+    fun getMovieAtPosition(position: Int): Movie {
+        return movies[position]
+    }
     fun setMovies(newMovies: List<Movie>) {
         val diffCall = DataDiff(movies, newMovies)
         val diffResult = DiffUtil.calculateDiff(diffCall)

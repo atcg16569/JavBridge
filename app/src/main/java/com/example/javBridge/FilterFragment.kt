@@ -86,12 +86,16 @@ class FilterFragment : Fragment() {
                     }
                 }
                 // 优化foreach
-                if (movieMap.isNotEmpty()){
+                if (movieMap.isNotEmpty()) {
                     val lists = movieMap.values
-                    when (movieMap.size){
+                    when (movieMap.size) {
                         1 -> movies.addAll(lists.elementAt(0))
-                        2 -> movies.addAll(lists.elementAt(0) intersect lists.elementAt(1))
-                        3 -> movies.addAll(lists.elementAt(0) intersect lists.elementAt(1) intersect lists.elementAt(2))
+                        2 -> movies.addAll(lists.elementAt(0) intersect lists.elementAt(1).toSet())
+                        3 -> movies.addAll(
+                            lists.elementAt(0) intersect lists.elementAt(1)
+                                .toSet() intersect lists.elementAt(2)
+                                .toSet()
+                        )
                     }
                 }
                 Log.d("results", movies.toString())

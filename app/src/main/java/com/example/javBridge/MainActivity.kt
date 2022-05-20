@@ -15,14 +15,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import com.example.javBridge.adapter.MovieAdapter
+import com.example.javBridge.adapter.UrlAdapter
 import com.example.javBridge.database.DatabaseApplication
 import com.example.javBridge.databinding.ActivityMainBinding
 import com.example.javBridge.getFrom.MovieText
 import com.example.javBridge.viewModel.MainViewModel
 import com.example.javBridge.viewModel.MainViewModelFactory
+import com.example.javBridge.viewModel.UrlViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
@@ -70,7 +74,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "filter empty!", Toast.LENGTH_LONG).show()
             }
         }
-
+        val movieHelper = MovieHelper(movieAdapter, mainViewModel)
+        ItemTouchHelper(movieHelper).attachToRecyclerView(mainBinding.list)
         mainBinding.executePendingBindings()
     }
 
@@ -99,6 +104,11 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.configure -> {
                 val intent = Intent(this, UrlActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.explore -> {
+                val intent = Intent(this, WebActivity::class.java)
                 startActivity(intent)
                 true
             }
@@ -209,3 +219,21 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+private class MovieHelper(private val adapter: MovieAdapter, private val viewModel: MainViewModel) :
+    ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP, ItemTouchHelper.LEFT) {
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        return false
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        val movie = adapter.getMovieAtPosition(viewHolder.adapterPosition)
+        viewModel.removeMovie(movie)
+        adapter.movies.remove(movie)
+        adapter.notifyItemRemoved(viewHolder.adapterPosition)
+    }
+
+}

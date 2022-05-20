@@ -10,6 +10,7 @@ class BridgeRepository(private val bridgeDao: BridgeDao) {
     fun flowMovie(id: String) = bridgeDao.flowMovie(id)
     fun flowAllMovies() = bridgeDao.flowAllMovies()
     suspend fun addMovie(movie: Movie) = bridgeDao.addMovie(movie)
+    suspend fun removeMovie(movie: Movie) = bridgeDao.removeMovie(movie)
     suspend fun addUrl(url: Url) = bridgeDao.addUrl(url)
     fun liveUrl(name: String) = bridgeDao.liveUrl(name)
     fun liveUrls() = bridgeDao.liveUrls()

@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:title="@string/import_title"
-        android:id="@+id/importJson"/>
-    <item android:title="@string/configure_title"
-        android:id="@+id/configure"/>
-    <item android:title="@string/export_title"
-        android:id="@+id/export"/>
-    <item android:id="@+id/worker"
-        android:title=""/>
+    <item
+        android:id="@+id/importJson"
+        android:title="@string/import_title" />
+    <item
+        android:id="@+id/configure"
+        android:title="@string/configure_title" />
+    <item
+        android:id="@+id/export"
+        android:title="@string/export_title" />
+    <item
+        android:id="@+id/worker"
+        android:title="" />
+    <item
+        android:id="@+id/explore"
+        android:title="@string/explore_title" />
 </menu>
