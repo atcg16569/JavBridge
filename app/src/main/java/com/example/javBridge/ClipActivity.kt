@@ -25,13 +25,17 @@ class ClipActivity : AppCompatActivity() {
             val selectedText = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
             val id = selectedText.trim()
             val clipText: TextView = findViewById(R.id.clipText)
-            clipViewModel.flowMovie(id).asLiveData().observe(this) {
-                if (it == null) {
-                    Toast.makeText(this,"add $id",Toast.LENGTH_LONG).show()
-                    clipViewModel.addMovie(Movie(id))
-                } else {
-                    clipText.text = "$id existed"
+            if (Regex("\\w+-\\d+").matches(id)) {
+                clipViewModel.flowMovie(id).asLiveData().observe(this) {
+                    if (it == null) {
+                        Toast.makeText(this, "add $id", Toast.LENGTH_LONG).show()
+                        clipViewModel.addMovie(Movie(id))
+                    } else {
+                        clipText.text = "$id existed"
+                    }
                 }
+            } else {
+                clipText.text = "$id not match"
             }
         }
     }
