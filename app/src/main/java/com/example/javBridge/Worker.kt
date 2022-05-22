@@ -13,7 +13,7 @@ class InfoWorker(context: Context, workerParams: WorkerParameters) :
     override fun doWork(): Result {
         val repository = DatabaseApplication().remoteRepository
         val movies = repository.limitMovies()
-        if (movies.isNullOrEmpty()) {
+        if (movies.isEmpty()) {
 //            val output = workDataOf("update result" to "no null movies\n$movies")
             Log.d("update result", "no null movies$movies")
         } else {

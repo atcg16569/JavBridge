@@ -13,8 +13,10 @@ import com.example.javBridge.database.Movie
 import com.example.javBridge.databinding.FragmentFilterBinding
 import com.example.javBridge.viewModel.MainViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class FilterFragment : Fragment() {
 
@@ -32,11 +34,12 @@ class FilterFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_filter, container, false)
         filterBinding.filter.setOnClickListener {
             val inputMap =
-                mutableMapOf("date" to true, "actress" to true, "studio" to true)
+                mutableMapOf("date" to false, "actress" to false, "studio" to false)
             val from = filterBinding.from.text
             val to = filterBinding.to.text
             val actor = filterBinding.actor.text
             val studioT = filterBinding.studio.text
+            val id = filterBinding.id.text.toString()
             val actress = mutableSetOf<String>()
             if (actor.isNotBlank()) {
                 actress.addAll(actor.toString().split(","))
@@ -44,8 +47,7 @@ class FilterFragment : Fragment() {
                 actress.removeIf {
                     it.isBlank()
                 }
-            } else {
-                inputMap["actress"] = false
+                inputMap["actress"] = true
             }
             val studio = mutableSetOf<String>()
             if (studioT.isNotBlank()) {
@@ -53,11 +55,10 @@ class FilterFragment : Fragment() {
                 studio.removeIf {
                     it.isBlank()
                 }
-            } else {
-                inputMap["studio"] = false
+                inputMap["studio"] = true
             }
-            if (from.isBlank() && to.isBlank()) {
-                inputMap["date"] = false
+            if (from.isNotBlank() || to.isNotBlank()) {
+                inputMap["date"] = true
             }
 
             val movies = mutableListOf<Movie>()
@@ -97,11 +98,21 @@ class FilterFragment : Fragment() {
                                 .toSet()
                         )
                     }
+                } else if (Regex("\\w+-\\d+").matches(id)) {
+                    viewModel.flowMovie(id.uppercase()).collect {
+                        if (it != null) {
+                            movies.add(it)
+                        }
+                        withContext(Dispatchers.Main) {//viewModel.viewModelScope.launch {
+                            viewModel.liveFilter.value = movies
+                        }
+                        Log.d("results", movies.toString())
+                    }
                 }
-                Log.d("results", movies.toString())
                 withContext(Dispatchers.Main) {//viewModel.viewModelScope.launch {
                     viewModel.liveFilter.value = movies
                 }
+                Log.d("results", movies.toString())
             }
         }
         return filterBinding.root

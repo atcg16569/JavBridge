@@ -27,7 +27,6 @@ class RemoteRepository(private val bridgeDao: BridgeDao) {
 
     // TODO:moo,lib,db
     private object Bus {
-        const val name = "javbus"
         const val url = "https://www.javbus.com/"
         val selector = mapOf(
             "studio" to "a[href*='studio']",

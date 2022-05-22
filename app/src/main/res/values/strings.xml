@@ -16,4 +16,5 @@
     <string name="filter_studio">studio</string>
     <string name="filter_yearSplit">-</string>
     <string name="filter_button">filter</string>
+    <string name="filter_id">ID</string>
 </resources>
