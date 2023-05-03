@@ -30,6 +30,11 @@ class InfoWorker(context: Context, workerParams: WorkerParameters) :
                     m.studio = result["studio"] as String
                     repository.updateMovie(m)
                     Log.d("update result", "${m.id}\ndelay $time seconds")
+                }else{
+                    m.actress = mutableSetOf("nullDoc")
+                    m.studio = "nullDoc"
+                    repository.updateMovie(m)
+                    Log.d("update result", "${m.id} failed\ndelay $time seconds")
                 }
             }
 //            val output = workDataOf("update result" to Json.encodeToString(movies))
