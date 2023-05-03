@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                 if (state == "schedule" || state == "CANCELLED") {
                     manager.enqueueUniquePeriodicWork(
                         "movie_refresh",
-                        ExistingPeriodicWorkPolicy.REPLACE,
+                        ExistingPeriodicWorkPolicy.UPDATE,
                         javRequest
                     )
                     Toast.makeText(this, "Worker Enqueued", Toast.LENGTH_LONG)
