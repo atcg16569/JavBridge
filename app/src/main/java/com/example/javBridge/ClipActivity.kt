@@ -3,7 +3,6 @@ package com.example.javBridge
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.asLiveData
@@ -24,18 +23,17 @@ class ClipActivity : AppCompatActivity() {
         if (intent.action == Intent.ACTION_PROCESS_TEXT) {
             val selectedText = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
             val id = selectedText.trim()
-            val clipText: TextView = findViewById(R.id.clipText)
             if (Regex("\\w+-\\d+").matches(id)) {
                 clipViewModel.flowMovie(id).asLiveData().observe(this) {
                     if (it == null) {
                         Toast.makeText(this, "add $id", Toast.LENGTH_LONG).show()
                         clipViewModel.addMovie(Movie(id))
                     } else {
-                        clipText.text = "$id existed"
+                        Toast.makeText(this, "$id existed", Toast.LENGTH_LONG).show()
                     }
                 }
             } else {
-                clipText.text = "$id not match"
+                Toast.makeText(this, "$id not match", Toast.LENGTH_LONG).show()
             }
         }
     }
