@@ -54,8 +54,9 @@ class RemoteRepository(private val bridgeDao: BridgeDao) {
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0")
                 .get()
         } catch (e: IOException) {
-            Log.e("connect failed!", e.localizedMessage!!)
-            throw e
+            e.localizedMessage?.let { Log.e("connect failed!", it) }
+//            throw e 抛出错误会中断worker
+            return null
         }
     }
 }
