@@ -1,8 +1,12 @@
 package com.example.javBridge.viewModel
 
 import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.example.javBridge.database.Movie
 import com.example.javBridge.database.BridgeRepository
+import com.example.javBridge.database.MoviePagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -15,12 +19,15 @@ class MainViewModel(
     fun removeMovie(movie: Movie) = viewModelScope.launch(Dispatchers.IO) {
         bridgeRepository.removeMovie(movie)
     }
-    fun liveAllMovies() = bridgeRepository.flowAllMovies().asLiveData()
     fun flowAllMovies() = bridgeRepository.flowAllMovies()
     fun liveUrls() = bridgeRepository.liveUrls()
     fun moviesByDate(start: String, end: String) = bridgeRepository.moviesByDate(start, end)
     fun moviesByActress(actress: String) = bridgeRepository.moviesByActress(actress)
     fun moviesByStudio(studio: String) = bridgeRepository.moviesByStudio(studio)
+    fun pagingMovies(movieList: List<Movie>) = Pager(
+        config = PagingConfig(50),
+        pagingSourceFactory = { MoviePagingSource(movieList) }
+    ).flow.cachedIn(viewModelScope)
 }
 
 class MainViewModelFactory(

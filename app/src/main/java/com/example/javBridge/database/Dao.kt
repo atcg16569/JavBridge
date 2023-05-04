@@ -1,13 +1,16 @@
 package com.example.javBridge.database
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BridgeDao {
+
     @Insert
     suspend fun addMovie(movie: Movie)
+
     @Delete
     suspend fun removeMovie(movie: Movie)
 
@@ -46,4 +49,6 @@ interface BridgeDao {
 
     @Update
     suspend fun updateUrl(url: Url)
+    @Query("SELECT * FROM movie")
+    fun pagingMovies(): PagingSource<Int,Movie>
 }

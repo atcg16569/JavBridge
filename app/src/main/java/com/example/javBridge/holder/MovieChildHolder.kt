@@ -10,16 +10,12 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.javBridge.database.Url
 import com.example.javBridge.databinding.MovieChildItemBinding
-import com.google.android.material.internal.ContextUtils
 
 
-class MovieChildHolder(
-    private val binding: MovieChildItemBinding
-) :
+class MovieChildHolder(private val binding: MovieChildItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(url: Url, parentID: String) {
         binding.button.text = url.name
@@ -36,8 +32,8 @@ class MovieChildHolder(
                     val builder = CustomTabsIntent.Builder()
                         .setToolbarColor(Color.parseColor("#161828"))
                     val intent = builder.build()
-                    enableChromeCustomTabsForOtherBrowsers(intent.intent,context)
-                    intent.launchUrl(context,Uri.parse(link))
+                    enableChromeCustomTabsForOtherBrowsers(intent.intent, context)
+                    intent.launchUrl(context, Uri.parse(link))
                     Log.d("position", parentID)
                 } else {
                     Toast.makeText(
@@ -55,7 +51,7 @@ class MovieChildHolder(
     }
 }
 
-private fun enableChromeCustomTabsForOtherBrowsers(customTabIntent: Intent?,context:Context) {
+private fun enableChromeCustomTabsForOtherBrowsers(customTabIntent: Intent?, context: Context) {
     val checkpkgs = arrayOf(
         "com.android.chrome",
         "com.chrome.beta",
@@ -101,7 +97,7 @@ private fun enableChromeCustomTabsForOtherBrowsers(customTabIntent: Intent?,cont
                 break
             }
         }
-        if (pkg == null && !browsers.isEmpty()) {
+        if (pkg == null && browsers.isNotEmpty()) {
             pkg = browsers[0]
         }
     }

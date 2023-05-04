@@ -13,18 +13,12 @@ import com.example.javBridge.database.Movie
 import com.example.javBridge.databinding.FragmentFilterBinding
 import com.example.javBridge.viewModel.MainViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
 class FilterFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,6 +63,7 @@ class FilterFragment : Fragment() {
                         when (it.key) {
                             "date" -> movieMap[it.key] =
                                 viewModel.moviesByDate(from.toString(), to.toString())
+
                             "actress" -> {
                                 val actList = mutableListOf<Movie>()
                                 for (a in actress) {
@@ -76,6 +71,7 @@ class FilterFragment : Fragment() {
                                 }
                                 movieMap[it.key] = actList
                             }
+
                             "studio" -> {
                                 val stuList = mutableListOf<Movie>()
                                 for (s in studio) {
@@ -99,7 +95,7 @@ class FilterFragment : Fragment() {
                         )
                     }
                 } else if (Regex("\\w+-\\d+").matches(id)) {
-                    viewModel.flowMovie(id.uppercase()).collect {
+                    viewModel.flowMovie(id.uppercase()).collect { it ->
                         if (it != null) {
                             movies.add(it)
                         }

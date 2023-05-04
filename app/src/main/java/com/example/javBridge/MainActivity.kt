@@ -14,20 +14,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
-import com.example.javBridge.adapter.MovieAdapter
-import com.example.javBridge.adapter.UrlAdapter
+import com.example.javBridge.adapter.PagingMovieAdapter
 import com.example.javBridge.database.DatabaseApplication
 import com.example.javBridge.databinding.ActivityMainBinding
 import com.example.javBridge.getFrom.MovieText
 import com.example.javBridge.viewModel.MainViewModel
 import com.example.javBridge.viewModel.MainViewModelFactory
-import com.example.javBridge.viewModel.UrlViewModel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -37,44 +36,45 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels {
         MainViewModelFactory((application as DatabaseApplication).bridgeRepository)
     }
-    private val movieAdapter = MovieAdapter()
-
+    private val pagingMovieAdapter = PagingMovieAdapter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mainBinding: ActivityMainBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
         mainBinding.mainViewModel = mainViewModel
-        mainBinding.list.adapter = movieAdapter
+        mainBinding.list.adapter = pagingMovieAdapter
         setSupportActionBar(mainBinding.toolbar)
         val drawerToggle =
             ActionBarDrawerToggle(this, mainBinding.drawer, mainBinding.toolbar, 0, 0)
         drawerToggle.syncState()
         mainBinding.drawer.addDrawerListener(drawerToggle)
-// nest recyclerview传递viewmodel,livedata,监听点击事件
-        movieAdapter.mainViewModel = mainViewModel
-//        val totalMovies = mutableListOf<Movie>()
-        mainViewModel.liveAllMovies().observe(this) { allMovies ->
-            movieAdapter.setMovies(allMovies)
-//            if (totalMovies.isEmpty()) {
-//                totalMovies.addAll(allMovies)
-//            } else {
-//                totalMovies.clear()
-//                totalMovies.addAll(allMovies)
-//            }
+        pagingMovieAdapter.mainViewModel = mainViewModel
+        mainViewModel.flowAllMovies().asLiveData().observe(this) { allMovies ->
+            mainViewModel.viewModelScope.launch {
+                mainViewModel.pagingMovies(allMovies).collectLatest {
+                    pagingMovieAdapter.submitData(it)
+                }
+            }
         }
         mainViewModel.liveFilter.observe(this) { filterMovies ->
             if (filterMovies.isNotEmpty()) {
-                movieAdapter.setMovies(filterMovies)
+                mainViewModel.viewModelScope.launch {
+                    mainViewModel.pagingMovies(filterMovies).collectLatest {
+                        pagingMovieAdapter.submitData(it)
+                    }
+                }
             } else {
                 mainViewModel.viewModelScope.launch {
-                    mainViewModel.flowAllMovies().collect {
-                        movieAdapter.setMovies(it)// = set totalMovies
+                    mainViewModel.flowAllMovies().collect { allMovies ->
+                        mainViewModel.pagingMovies(allMovies).collectLatest {
+                            pagingMovieAdapter.submitData(it)
+                        }
                     }
                 }
                 Toast.makeText(this, "filter empty!", Toast.LENGTH_LONG).show()
             }
         }
-        val movieHelper = MovieHelper(movieAdapter, mainViewModel)
+        val movieHelper = MovieHelper(pagingMovieAdapter, mainViewModel)
         ItemTouchHelper(movieHelper).attachToRecyclerView(mainBinding.list)
         mainBinding.executePendingBindings()
     }
@@ -102,16 +102,19 @@ class MainActivity : AppCompatActivity() {
                 getContent.launch("application/json")
                 true
             }
+
             R.id.configure -> {
                 val intent = Intent(this, UrlActivity::class.java)
                 startActivity(intent)
                 true
             }
+
             R.id.explore -> {
                 val intent = Intent(this, WebActivity::class.java)
                 startActivity(intent)
                 true
             }
+
             R.id.export -> {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     type = "application/json"
@@ -120,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                 writeMovies.launch(intent)
                 true
             }
+
             R.id.worker -> {
                 val manager = WorkManager.getInstance(this)
                 val state = item.title
@@ -138,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
 //        return super.onOptionsItemSelected(item)
@@ -219,7 +224,10 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-private class MovieHelper(private val adapter: MovieAdapter, private val viewModel: MainViewModel) :
+private class MovieHelper(
+    private val adapter: PagingMovieAdapter,
+    private val viewModel: MainViewModel
+) :
     ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP, ItemTouchHelper.LEFT) {
     override fun onMove(
         recyclerView: RecyclerView,
@@ -231,9 +239,9 @@ private class MovieHelper(private val adapter: MovieAdapter, private val viewMod
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val movie = adapter.getMovieAtPosition(viewHolder.adapterPosition)
-        viewModel.removeMovie(movie)
-        adapter.movies.remove(movie)
-        adapter.notifyItemRemoved(viewHolder.adapterPosition)
+        if (movie != null) {
+            viewModel.removeMovie(movie)
+            Toast.makeText(viewHolder.itemView.context,"Delete ${movie.id}",Toast.LENGTH_LONG).show()
+        }
     }
-
 }
