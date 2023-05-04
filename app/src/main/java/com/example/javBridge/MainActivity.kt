@@ -26,6 +26,7 @@ import com.example.javBridge.databinding.ActivityMainBinding
 import com.example.javBridge.getFrom.MovieText
 import com.example.javBridge.viewModel.MainViewModel
 import com.example.javBridge.viewModel.MainViewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
@@ -165,12 +166,10 @@ class MainActivity : AppCompatActivity() {
                             false -> MovieText().db(text)
                         }
                     }
-                    for (m in list) {
-                        mainViewModel.viewModelScope.launch {
-                            mainViewModel.flowMovie(m.id).collect {
-                                if (it == null) {
-                                    mainViewModel.susAdd(m)
-                                }// else update 不覆盖应用数据
+                    mainViewModel.viewModelScope.launch(Dispatchers.IO) {
+                        for (m in list) {
+                            if (mainViewModel.movieByID(m.id) == null) {
+                                mainViewModel.susAdd(m)
                             }
                         }
                     }
@@ -238,10 +237,15 @@ private class MovieHelper(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val movie = adapter.getMovieAtPosition(viewHolder.adapterPosition)
+        val movie = adapter.getMovieAtPosition(viewHolder.layoutPosition)
         if (movie != null) {
             viewModel.removeMovie(movie)
-            Toast.makeText(viewHolder.itemView.context,"Delete ${movie.id}",Toast.LENGTH_LONG).show()
+            Toast.makeText(viewHolder.itemView.context, "Delete ${movie.id}", Toast.LENGTH_SHORT)
+                .show()
+            Log.d(
+                "swipe position",
+                "absolutePosition:${viewHolder.absoluteAdapterPosition}\nbindingPosition:${viewHolder.bindingAdapterPosition}\nlayoutPosition:${viewHolder.layoutPosition}"
+            )
         }
     }
 }

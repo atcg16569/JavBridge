@@ -17,6 +17,9 @@ interface BridgeDao {
     @Query("SELECT * FROM movie WHERE id=:id")
     fun flowMovie(id: String): Flow<Movie?>
 
+    @Query("SELECT * FROM movie WHERE id=:id")
+    fun movieByID(id: String): Movie?
+
     @Query("SELECT * FROM movie")
     fun flowAllMovies(): Flow<List<Movie>>
 
@@ -49,6 +52,7 @@ interface BridgeDao {
 
     @Update
     suspend fun updateUrl(url: Url)
+
     @Query("SELECT * FROM movie")
-    fun pagingMovies(): PagingSource<Int,Movie>
+    fun pagingMovies(): PagingSource<Int, Movie>
 }

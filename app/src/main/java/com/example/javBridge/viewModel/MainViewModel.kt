@@ -14,7 +14,6 @@ class MainViewModel(
     private val bridgeRepository: BridgeRepository,
 ) : ViewModel() {
     val liveFilter = MutableLiveData<List<Movie>>()
-    fun flowMovie(id: String) = bridgeRepository.flowMovie(id)
     suspend fun susAdd(movie: Movie) = bridgeRepository.addMovie(movie)
     fun removeMovie(movie: Movie) = viewModelScope.launch(Dispatchers.IO) {
         bridgeRepository.removeMovie(movie)
@@ -28,6 +27,7 @@ class MainViewModel(
         config = PagingConfig(50),
         pagingSourceFactory = { MoviePagingSource(movieList) }
     ).flow.cachedIn(viewModelScope)
+    fun movieByID(id: String) = bridgeRepository.movieByID(id)
 }
 
 class MainViewModelFactory(

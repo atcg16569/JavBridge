@@ -95,14 +95,9 @@ class FilterFragment : Fragment() {
                         )
                     }
                 } else if (Regex("\\w+-\\d+").matches(id)) {
-                    viewModel.flowMovie(id.uppercase()).collect { it ->
-                        if (it != null) {
-                            movies.add(it)
-                        }
-                        withContext(Dispatchers.Main) {//viewModel.viewModelScope.launch {
-                            viewModel.liveFilter.value = movies
-                        }
-                        Log.d("results", movies.toString())
+                    val search = viewModel.movieByID(id.uppercase())
+                    if (search != null) {
+                        movies.add(search)
                     }
                 }
                 withContext(Dispatchers.Main) {//viewModel.viewModelScope.launch {

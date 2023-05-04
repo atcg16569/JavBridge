@@ -19,6 +19,7 @@ class BridgeRepository(private val bridgeDao: BridgeDao) {
     fun moviesByDate(start: String, end: String) = bridgeDao.moviesByDate(start, end)
     fun moviesByActress(actress: String) = bridgeDao.moviesByActress(actress)
     fun moviesByStudio(studio: String) = bridgeDao.moviesByStudio(studio)
+    fun movieByID(id: String) = bridgeDao.movieByID(id)
 }
 
 class RemoteRepository(private val bridgeDao: BridgeDao) {
