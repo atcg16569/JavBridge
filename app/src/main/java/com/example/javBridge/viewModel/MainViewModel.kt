@@ -24,7 +24,7 @@ class MainViewModel(
     fun moviesByDate(start: String, end: String) = bridgeRepository.moviesByDate(start, end)
     fun moviesByActress(actress: String) = bridgeRepository.moviesByActress(actress)
     fun moviesByStudio(studio: String) = bridgeRepository.moviesByStudio(studio)
-    fun pagingMovies(movieList: List<Movie>, pageSize: Int = 40) = Pager(
+    fun pagingMovies(movieList: List<Movie>, pageSize: Int = 50) = Pager(
         config = PagingConfig(pageSize),
         pagingSourceFactory = { MoviePagingSource(movieList, pageSize) }
     ).flow.cachedIn(viewModelScope)

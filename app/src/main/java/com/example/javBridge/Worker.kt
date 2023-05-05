@@ -6,6 +6,7 @@ import androidx.work.*
 import com.example.javBridge.database.DatabaseApplication
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.jsoup.nodes.Document
 import java.util.concurrent.TimeUnit
 
 class InfoWorker(context: Context, workerParams: WorkerParameters) :
@@ -15,7 +16,8 @@ class InfoWorker(context: Context, workerParams: WorkerParameters) :
         val movies = repository.limitMovies()
         if (movies.isEmpty()) {
 //            val output = workDataOf("update result" to "no null movies\n$movies")
-            Log.d("update result", "no null movies$movies")
+            movies.plus(repository.failedMovies())
+            Log.d("update result", "no null movies,refresh failed movies\n$movies")
         } else {
             for (m in movies) {
                 val url = repository.busJoinUrl(m.id)
@@ -24,17 +26,17 @@ class InfoWorker(context: Context, workerParams: WorkerParameters) :
                     delay(time * 1000)
                 }
                 val doc = repository.getDoc(url)
-                if (doc != null) {
+                if (doc is Document) {
                     val result = repository.dealBus(doc)
                     m.actress = result["actress"] as MutableSet<String>
                     m.studio = result["studio"] as String
                     repository.updateMovie(m)
-                    Log.d("update result", "${m.id}\ndelay $time seconds")
-                }else{
-                    m.actress = mutableSetOf("nullDoc")
-                    m.studio = "nullDoc"
+                    Log.d("update result", "${m.id},delay $time seconds")
+                }else if (doc is Int){
+//                    m.actress = mutableSetOf(doc.toString())
+                    m.studio = "status_$doc"
                     repository.updateMovie(m)
-                    Log.d("update result", "${m.id} failed\ndelay $time seconds")
+                    Log.d("update result", "${m.id} failed,statusCode:$doc\ndelay $time seconds")
                 }
             }
 //            val output = workDataOf("update result" to Json.encodeToString(movies))

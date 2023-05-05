@@ -29,11 +29,14 @@ interface BridgeDao {
     @Query("SELECT * FROM movie WHERE (actress IS :actress OR actress LIKE '%' || :actress || '%' ) ")
     fun moviesByActress(actress: String): List<Movie>
 
-    @Query("SELECT * FROM movie WHERE (studio IS :studio OR studio=:studio)")
+    @Query("SELECT * FROM movie WHERE (studio IS :studio)")
     fun moviesByStudio(studio: String): List<Movie>
 
-    @Query("SELECT * FROM movie WHERE (actress IS NULL OR studio IS NULL) LIMIT (:limit)")
+    @Query("SELECT * FROM movie WHERE (actress IS NULL AND studio IS NULL) LIMIT (:limit)")
     fun limitMovies(limit: Int = 5): List<Movie>
+
+    @Query("SELECT * FROM movie WHERE (studio like 'status_%' ) LIMIT (:limit)")
+    fun failedMovies(limit: Int = 5): List<Movie>
 
     @Update
     fun updateMovie(movie: Movie)

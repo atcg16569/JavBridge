@@ -1,9 +1,9 @@
 package com.example.javBridge.database
 
 import android.util.Log
+import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.io.IOException
 
 
 class BridgeRepository(private val bridgeDao: BridgeDao) {
@@ -24,6 +24,7 @@ class BridgeRepository(private val bridgeDao: BridgeDao) {
 
 class RemoteRepository(private val bridgeDao: BridgeDao) {
     fun limitMovies() = bridgeDao.limitMovies()
+    fun failedMovies() = bridgeDao.failedMovies()
     fun updateMovie(movie: Movie) = bridgeDao.updateMovie(movie)
 
     // TODO:moo,lib,db
@@ -49,15 +50,17 @@ class RemoteRepository(private val bridgeDao: BridgeDao) {
         return mapOf("actress" to actress, "studio" to studio)
     }
 
-    fun getDoc(url: String): Document? {
+    fun getDoc(url: String): Any? {
         return try {
-            Jsoup.connect(url)
+            val connect = Jsoup.connect(url)
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0")
-                .get()
-        } catch (e: IOException) {
-            e.localizedMessage?.let { Log.e("connect failed!", it) }
-//            throw e 抛出错误会中断worker
-            return null
+            val response = connect.execute()
+            response.parse()
+        } catch (e: HttpStatusException) {
+//            throw e //抛出错误会中断worker
+            e.message?.let { Log.e("connect failed!", it) }
+            e.statusCode
+//            return null
         }
     }
 }
