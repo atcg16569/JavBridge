@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -77,6 +78,11 @@ class MainActivity : AppCompatActivity() {
         }
         val movieHelper = MovieHelper(pagingMovieAdapter, mainViewModel)
         ItemTouchHelper(movieHelper).attachToRecyclerView(mainBinding.list)
+        lifecycleScope.launch {
+            pagingMovieAdapter.loadStateFlow.collectLatest { loadStates ->
+                Log.d("loadState",loadStates.source.toString())
+            }
+        }
         mainBinding.executePendingBindings()
     }
 

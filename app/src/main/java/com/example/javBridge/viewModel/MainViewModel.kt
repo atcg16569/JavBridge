@@ -18,15 +18,17 @@ class MainViewModel(
     fun removeMovie(movie: Movie) = viewModelScope.launch(Dispatchers.IO) {
         bridgeRepository.removeMovie(movie)
     }
+
     fun flowAllMovies() = bridgeRepository.flowAllMovies()
     fun liveUrls() = bridgeRepository.liveUrls()
     fun moviesByDate(start: String, end: String) = bridgeRepository.moviesByDate(start, end)
     fun moviesByActress(actress: String) = bridgeRepository.moviesByActress(actress)
     fun moviesByStudio(studio: String) = bridgeRepository.moviesByStudio(studio)
-    fun pagingMovies(movieList: List<Movie>) = Pager(
-        config = PagingConfig(50),
-        pagingSourceFactory = { MoviePagingSource(movieList) }
+    fun pagingMovies(movieList: List<Movie>, pageSize: Int = 40) = Pager(
+        config = PagingConfig(pageSize),
+        pagingSourceFactory = { MoviePagingSource(movieList, pageSize) }
     ).flow.cachedIn(viewModelScope)
+
     fun movieByID(id: String) = bridgeRepository.movieByID(id)
 }
 
