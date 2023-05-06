@@ -29,7 +29,7 @@ interface BridgeDao {
     @Query("SELECT * FROM movie WHERE (actress IS :actress OR actress LIKE '%' || :actress || '%' ) ")
     fun moviesByActress(actress: String): List<Movie>
 
-    @Query("SELECT * FROM movie WHERE (studio IS :studio)")
+    @Query("SELECT * FROM movie WHERE (studio IS :studio OR studio like '%'||:studio||'%')")
     fun moviesByStudio(studio: String): List<Movie>
 
     @Query("SELECT * FROM movie WHERE (actress IS NULL AND studio IS NULL) LIMIT (:limit)")

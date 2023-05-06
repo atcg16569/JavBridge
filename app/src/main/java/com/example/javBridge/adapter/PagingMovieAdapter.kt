@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.javBridge.database.Movie
 import com.example.javBridge.databinding.MovieItemBinding
 import com.example.javBridge.holder.MovieHolder
@@ -24,6 +25,7 @@ class PagingMovieAdapter : PagingDataAdapter<Movie, MovieHolder>(diffCallback) {
     }
 
     lateinit var mainViewModel: MainViewModel
+    lateinit var itemTouchHelper: ItemTouchHelper
     fun getMovieAtPosition(position: Int): Movie? {
         return getItem(position)
     }
@@ -32,7 +34,7 @@ class PagingMovieAdapter : PagingDataAdapter<Movie, MovieHolder>(diffCallback) {
         mainViewModel.liveUrls().observe(holder.itemView.context as LifecycleOwner) { urls ->
             holder.childAdapter.setUrls(urls)
         }
-        getItem(position)?.let { holder.bind(it) }
+        getItem(position)?.let { holder.bind(it, itemTouchHelper) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder {

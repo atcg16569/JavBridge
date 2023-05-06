@@ -76,11 +76,13 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "filter empty!", Toast.LENGTH_LONG).show()
             }
         }
-        val movieHelper = MovieHelper(pagingMovieAdapter, mainViewModel)
-        ItemTouchHelper(movieHelper).attachToRecyclerView(mainBinding.list)
+        val movieHelperCallback = MovieHelperCallback(pagingMovieAdapter, mainViewModel)
+        val movieHelper = ItemTouchHelper(movieHelperCallback)
+        pagingMovieAdapter.itemTouchHelper = movieHelper
+        movieHelper.attachToRecyclerView(mainBinding.list)
         lifecycleScope.launch {
             pagingMovieAdapter.loadStateFlow.collectLatest { loadStates ->
-                Log.d("loadState",loadStates.source.toString())
+                Log.d("loadState", loadStates.source.toString())
             }
         }
         mainBinding.executePendingBindings()
@@ -229,11 +231,18 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-private class MovieHelper(
+class MovieHelperCallback(
     private val adapter: PagingMovieAdapter,
     private val viewModel: MainViewModel
 ) :
-    ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP, ItemTouchHelper.LEFT) {
+    ItemTouchHelper.Callback() {
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        return makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT)
+    }
+
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
@@ -246,6 +255,7 @@ private class MovieHelper(
         val movie = adapter.getMovieAtPosition(viewHolder.layoutPosition)
         if (movie != null) {
             viewModel.removeMovie(movie)
+            adapter.notifyItemRemoved(viewHolder.layoutPosition)
             Toast.makeText(viewHolder.itemView.context, "Delete ${movie.id}", Toast.LENGTH_SHORT)
                 .show()
             Log.d(
@@ -253,5 +263,9 @@ private class MovieHelper(
                 "absolutePosition:${viewHolder.absoluteAdapterPosition}\nbindingPosition:${viewHolder.bindingAdapterPosition}\nlayoutPosition:${viewHolder.layoutPosition}"
             )
         }
+    }
+
+    override fun isItemViewSwipeEnabled(): Boolean {
+        return false
     }
 }
