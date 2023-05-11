@@ -9,8 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class UrlViewModel(private val repository: BridgeRepository) : ViewModel() {
-    fun liveUrls() = repository.liveUrls()
-    fun liveUrl(name: String) = repository.liveUrl(name)
+    fun flowUrls() = repository.flowUrls()
+    fun urlByName(name: String) = repository.urlByName(name)
     fun add(url: Url) = viewModelScope.launch(Dispatchers.IO) {
         repository.addUrl(url)
     }

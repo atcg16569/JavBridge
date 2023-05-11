@@ -22,10 +22,11 @@ class MovieChildHolder(private val binding: MovieChildItemBinding) :
         binding.button.setOnClickListener {
             try {
                 val context = binding.root.context
-                val idRegex = Regex("%s")
+//                val idRegex = Regex("%s")
+                val idRegex = Regex("\\\$id")
                 //link改变需要重启。若live观察一旦变化,则会自动跳转
                 //在父adpter观察即可
-                if (url.link.contains("%s")) {
+                if (url.link.contains("\$id")) {
                     val link = idRegex.replace(url.link, parentID)
 //                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
 //                    binding.root.context.startActivity(webIntent)

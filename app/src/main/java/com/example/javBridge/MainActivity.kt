@@ -2,7 +2,6 @@ package com.example.javBridge
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +24,8 @@ import com.example.javBridge.adapter.PagingMovieAdapter
 import com.example.javBridge.database.DatabaseApplication
 import com.example.javBridge.databinding.ActivityMainBinding
 import com.example.javBridge.getFrom.MovieText
+import com.example.javBridge.getFrom.readTextFromUri
+import com.example.javBridge.getFrom.writeDocument
 import com.example.javBridge.viewModel.MainViewModel
 import com.example.javBridge.viewModel.MainViewModelFactory
 import kotlinx.coroutines.Dispatchers
@@ -88,7 +89,6 @@ class MainActivity : AppCompatActivity() {
         mainBinding.executePendingBindings()
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
@@ -113,7 +113,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.configure -> {
-                val intent = Intent(this, UrlActivity::class.java)
+                val intent = Intent(this, UrlActivity::class.java).apply {
+                    addCategory(Intent.CATEGORY_SELECTED_ALTERNATIVE)
+                }
                 startActivity(intent)
                 true
             }
@@ -161,17 +163,18 @@ class MainActivity : AppCompatActivity() {
     private val getContent =
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
             if (uris.isNotEmpty()) {
+                val dealText = MovieText()
                 for (u in uris) {
                     val name = File(u.path!!).name
                     Log.d("import file", name)
                     val host = name.substringBefore(".json")
-                    val text = readTextFromUri(u)
+                    val text = readTextFromUri(u, contentResolver)
                     val list = if (host.startsWith("backup_bridge")) {
-                        MovieText().restore(text)
+                        dealText.restore(text)
                     } else {
                         when (host.endsWith("_javbus")) {
-                            true -> MovieText().bus(text)
-                            false -> MovieText().db(text)
+                            true -> dealText.bus(text)
+                            false -> dealText.db(text)
                         }
                     }
                     mainViewModel.viewModelScope.launch(Dispatchers.IO) {
@@ -193,54 +196,24 @@ class MainActivity : AppCompatActivity() {
                 if (uri != null) {
                     mainViewModel.viewModelScope.launch {
                         mainViewModel.flowAllMovies().collect {
-                            writeDocument(uri, Json.encodeToString(it))
+                            writeDocument(uri, Json.encodeToString(it), contentResolver)
                         }
                     }
                 }
             }
         }
-
-    // 读取字符串
-    private fun readTextFromUri(uri: Uri): String {
-        val stringBuilder = StringBuilder()
-        contentResolver.openInputStream(uri)?.use { inputStream ->
-            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                var line: String? = reader.readLine()
-                while (line != null) {
-                    stringBuilder.append(line)
-                    line = reader.readLine()
-                }
-            }
-        }
-        return stringBuilder.toString()
-    }
-
-    // 修改文档
-    private fun writeDocument(uri: Uri, content: String) {
-        try {
-            contentResolver.openFileDescriptor(uri, "w")?.use {
-                FileOutputStream(it.fileDescriptor).use { output ->
-                    output.write(content.toByteArray())
-                }
-            }
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
 }
 
-class MovieHelperCallback(
+private class MovieHelperCallback(
     private val adapter: PagingMovieAdapter,
     private val viewModel: MainViewModel
-) :
-    ItemTouchHelper.Callback() {
+) : ItemTouchHelper.Callback() {
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT)
+        val swipeFlags = ItemTouchHelper.LEFT//ItemTouchHelper.UP;OR ItemTouchHelper.DOWN
+        return makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, swipeFlags)
     }
 
     override fun onMove(

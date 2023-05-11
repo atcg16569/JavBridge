@@ -1,6 +1,5 @@
 package com.example.javBridge.database
 
-import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
@@ -45,10 +44,10 @@ interface BridgeDao {
     suspend fun addUrl(url: Url)
 
     @Query("SELECT * FROM url WHERE name=(:name)")
-    fun liveUrl(name: String): LiveData<Url?>
+    fun urlByName(name: String): Url?
 
     @Query("SELECT * FROM url")
-    fun liveUrls(): LiveData<List<Url>>
+    fun flowUrls(): Flow<List<Url>>
 
     @Delete
     suspend fun removeUrl(url: Url)

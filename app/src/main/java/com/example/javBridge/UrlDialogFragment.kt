@@ -6,8 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.viewModelScope
 import com.example.javBridge.database.Url
 import com.example.javBridge.viewModel.UrlViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class UrlDialogFragment(private val urlViewModel: UrlViewModel) : DialogFragment() {
@@ -22,12 +25,12 @@ class UrlDialogFragment(private val urlViewModel: UrlViewModel) : DialogFragment
                     val name = view.findViewById<EditText>(R.id.urlName).text.toString()
                     val link = view.findViewById<EditText>(R.id.urlLink).text.toString()
                     if (name.isNotEmpty() && link.isNotEmpty() && link.startsWith("http")) {
-                        urlViewModel.liveUrl(name).observe(this@UrlDialogFragment) { url ->
-                            if (url == null) {
+                        urlViewModel.viewModelScope.launch(Dispatchers.IO) {
+                            if (urlViewModel.urlByName(name) == null) {
                                 val ur = Url(name, link)
                                 urlViewModel.add(ur)
                             } else {
-                                Log.d("addUrl", "${url.name} existed")
+                                Log.d("addUrl", "$name existed")
                             }
                         }
                     }

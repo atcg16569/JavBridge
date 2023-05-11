@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.asLiveData
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -31,7 +32,7 @@ class PagingMovieAdapter : PagingDataAdapter<Movie, MovieHolder>(diffCallback) {
     }
 
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
-        mainViewModel.liveUrls().observe(holder.itemView.context as LifecycleOwner) { urls ->
+        mainViewModel.flowUrls().asLiveData().observe(holder.itemView.context as LifecycleOwner) { urls ->
             holder.childAdapter.setUrls(urls)
         }
         getItem(position)?.let { holder.bind(it, itemTouchHelper) }

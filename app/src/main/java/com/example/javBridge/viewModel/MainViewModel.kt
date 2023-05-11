@@ -10,17 +10,14 @@ import com.example.javBridge.database.MoviePagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel(
-    private val bridgeRepository: BridgeRepository,
-) : ViewModel() {
+class MainViewModel(private val bridgeRepository: BridgeRepository) : ViewModel() {
     val liveFilter = MutableLiveData<List<Movie>>()
     suspend fun susAdd(movie: Movie) = bridgeRepository.addMovie(movie)
     fun removeMovie(movie: Movie) = viewModelScope.launch(Dispatchers.IO) {
         bridgeRepository.removeMovie(movie)
     }
-
     fun flowAllMovies() = bridgeRepository.flowAllMovies()
-    fun liveUrls() = bridgeRepository.liveUrls()
+    fun flowUrls() = bridgeRepository.flowUrls()
     fun moviesByDate(start: String, end: String) = bridgeRepository.moviesByDate(start, end)
     fun moviesByActress(actress: String) = bridgeRepository.moviesByActress(actress)
     fun moviesByStudio(studio: String) = bridgeRepository.moviesByStudio(studio)

@@ -22,6 +22,7 @@ data class Movie(
 )
 
 @Entity
+@Serializable
 data class Url(
     @PrimaryKey val name: String,
     var link: String
